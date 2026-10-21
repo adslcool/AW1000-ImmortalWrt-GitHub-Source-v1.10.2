@@ -1,0 +1,157 @@
+name: Build AW1000
+
+on:
+  workflow_dispatch:
+    inputs:
+      include_ssr_plus:
+        description: '加入 SSR Plus+（含 Xray、SSR Libev 等依赖）'
+        type: boolean
+        default: true
+      include_openclash:
+        description: '加入 OpenClash（含 Mihomo 和相关依赖）'
+        type: boolean
+        default: true
+      lan_ip:
+        description: 'LAN IPv4 地址（固定 /24）'
+        type: string
+        required: true
+        default: '192.168.1.1'
+      admin_password:
+        description: '指定root密码；留空用Secret，均未设置则按IMEI生成（自动选择组件）'
+        type: string
+        required: false
+      ssid_24g:
+        description: '2.4GHz SSID（1–32 字节）'
+        type: string
+        required: true
+        default: 'AW1000_2.4G'
+      ssid_5g:
+        description: '5GHz SSID（1–32 字节）'
+        type: string
+        required: true
+        default: 'AW1000_5G'
+      wifi_password:
+        description: 'Wi-Fi密码（默认1234567890；可在此修改）'
+        type: string
+        required: false
+        default: '1234567890'
+      immortalwrt_ref:
+        description: 'latest 自动选最新正式版；也可输入 v25.12.2'
+        type: string
+        required: true
+        default: 'latest'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aw1000-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    env:
+      TZ: Asia/Shanghai
+      FORCE_UNSAFE_CONFIGURE: '1'
+    steps:
+      - name: Checkout build project
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate private settings
+        env:
+          BOARD_STATE_KEY: ${{ secrets.BOARD_STATE_KEY }}
+          INCLUDE_SSR_PLUS: ${{ inputs.include_ssr_plus }}
+          INCLUDE_OPENCLASH: ${{ inputs.include_openclash }}
+          LAN_IP: ${{ inputs.lan_ip }}
+          ADMIN_PASSWORD: ${{ inputs.admin_password || secrets.ROUTER_ADMIN_PASSWORD }}
+          SSID_24G: ${{ inputs.ssid_24g }}
+          SSID_5G: ${{ inputs.ssid_5g }}
+          WIFI_PASSWORD: ${{ inputs.wifi_password || secrets.WIFI_PASSWORD }}
+        run: python3 scripts/settings.py
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential clang flex bison g++ gawk gettext git \
+            libncurses-dev libssl-dev libcrypt-dev python3 python3-setuptools python3-pyelftools \
+            rsync swig unzip zlib1g-dev file wget curl ccache cmake ninja-build \
+            pkgconf patch time xsltproc tar zstd libelf-dev autoconf automake \
+            libtool libtool-bin gperf help2man texinfo lua5.1 jq
+
+      - name: Check available disk space
+        run: |
+          df -h .
+          available=$(df -Pk . | awk 'NR==2 {print $4}')
+          if [ "$available" -lt 26214400 ]; then
+            echo '::error::至少需要 25GiB 可用空间，请使用更大的 runner。'
+            exit 1
+          fi
+
+      - name: Run project checks
+        run: |
+          python3 -m unittest discover -s tests -v
+          for script in files/*.sh files/*.init files/[0-9]*; do sh -n "$script"; done
+          luac5.1 -p files/filetransfer.lua
+          node --check files/qmodem_runtime.js
+
+      - name: Resolve release and prepare fresh sources
+        id: sources
+        env:
+          IMMORTALWRT_REF: ${{ inputs.immortalwrt_ref }}
+        run: python3 scripts/prepare.py
+
+      - name: Generate overlay and resolve all package dependencies
+        run: python3 scripts/configure.py
+
+      - name: Verify mwan3-nft sources and proxy routing marks
+        run: sh tests/check_upstream.sh work/immortalwrt
+
+      - name: Verify managed QMI format encoding on host
+        run: python3 tests/check_qmi_format.py work/immortalwrt
+
+      - name: Download sources
+        working-directory: work/immortalwrt
+        run: make download -j8
+
+      - name: Check Xray source and Go compiler compatibility
+        run: python3 scripts/check_xray_go.py
+
+      - name: Compile firmware
+        working-directory: work/immortalwrt
+        run: |
+          set -o pipefail
+          jobs=$(nproc)
+          if [ "$jobs" -gt 4 ]; then jobs=4; fi
+          if ! make -j"$jobs" 2>&1 | tee ../build.log; then
+            echo 'Parallel build failed; retrying once with full single-job logs.'
+            make -j1 V=s 2>&1 | tee ../build-retry.log
+          fi
+
+      - name: Verify images and package manifest
+        run: python3 scripts/collect.py
+
+      - name: Upload firmware and reproducibility records
+        uses: actions/upload-artifact@v4
+        with:
+          name: AW1000-ImmortalWrt-${{ steps.sources.outputs.release }}-${{ github.run_number }}
+          path: output/*
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: 生成简体中文构建摘要
+        env:
+          BUILD_PASSWORD_SOURCE: ${{ inputs.admin_password != '' && '使用本次运行填写的管理密码' || secrets.ROUTER_ADMIN_PASSWORD != '' && '使用仓库 Secret ROUTER_ADMIN_PASSWORD' || '由IMEI初始化生成' }}
+        run: python3 scripts/collect.py --summary
+
+      - name: Remove generated credentials
+        if: always()
+        run: |
+          rm -f .private/settings.json work/immortalwrt/files/etc/aw1000-build.conf work/immortalwrt/package/custom/aw1000-board-state/src/board_key.h work/immortalwrt/build_dir/target-*/aw1000-board-state-*/board_key.h
+
+      # Build logs are deliberately kept in this run's log stream. Do not upload
+      # the work tree: it contains a Wi-Fi password in the firmware overlay.
