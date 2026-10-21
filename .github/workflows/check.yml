@@ -1,0 +1,33 @@
+name: Check build project
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install syntax checkers
+        run: sudo apt-get update && sudo apt-get install -y shellcheck lua5.1 jq libssl-dev libcrypt-dev
+      - name: Test provisioning and input validation
+        run: python3 -m unittest discover -s tests -v
+      - name: Check syntax
+        run: |
+          python3 -m compileall -q scripts tests
+          shellcheck -e SC1090,SC2034 files/aw1000-provision.sh files/91-aw1000-failover files/aw1000-uplink-enroll.sh files/aw1000-mwan-follow.sh files/aw1000-mwan-health.sh files/aw1000-ipv6-follow.sh files/aw1000-leds.sh files/92-aw1000-v160
+          for script in files/*.sh files/*.init files/[0-9]* files/aw1000-phone-* files/aw1000-fxsd-run; do sh -n "$script"; done
+          luac5.1 -p files/filetransfer.lua
+          node --check files/qmodem_runtime.js
+          python3 scripts/internet.py /tmp/aw1000-generated
+          sh -n /tmp/aw1000-generated/files/usr/sbin/aw1000-internet
+          shellcheck /tmp/aw1000-generated/files/usr/sbin/aw1000-internet
+          node --check /tmp/aw1000-generated/files/www/luci-static/resources/view/aw1000/internet.js
+          python3 scripts/features.py /tmp/aw1000-features
+          for script in /tmp/aw1000-features/files/etc/rc.button/wlan /tmp/aw1000-features/files/etc/init.d/* /tmp/aw1000-features/files/etc/uci-defaults/* /tmp/aw1000-features/files/usr/sbin/*; do sh -n "$script"; shellcheck -e SC1091 "$script"; done
+          node --check /tmp/aw1000-features/package/custom/luci-app-xupnpd/root/www/luci-static/resources/view/aw1000/xupnpd.js
+          python3 -c "import sys; from pathlib import Path; sys.path.insert(0,'scripts'); import board_state; board_state.install(Path('/tmp/aw1000-board-check'), {'include_device_init':True,'board_state_key':bytes(range(32)).hex()})"
+          for script in /tmp/aw1000-board-check/package/custom/aw1000-board-state/files/*; do sh -n "$script"; shellcheck "$script"; done
