@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "build_project_version": "1.10.2",
+  "checked_release": "v25.12.2",
+  "checked_release_commit": "4fc16f2985a358bd43bb522e43f05395fcbd6ed5",
+  "checked_at": "2026-10-21",
+  "immortalwrt": "https://github.com/immortalwrt/immortalwrt.git",
+  "feeds": {
+    "qmodem": {
+      "url": "https://github.com/FUjr/QModem.git",
+      "commit": "73d18392db358fb4a0da6ace1af0d07978bae324"
+    },
+    "helloworld": {
+      "url": "https://github.com/fw876/helloworld.git",
+      "commit": "0d24da050f2354f48fe8992628054417a5c4b9da"
+    }
+  },
+  "package_providers": {
+    "xray-core": "packages",
+    "mosdns": "helloworld"
+  },
+  "filetransfer": {
+    "url": "https://github.com/coolsnowwolf/luci.git",
+    "commit": "7b6bba0ffba9c8b9b3933962ea97ac0d41c4ff32",
+    "path": "applications/luci-app-filetransfer"
+  },
+  "aw1000_phone": {
+    "url": "https://github.com/Perz3us/openwrt-aw1000-phone.git",
+    "commit": "2d3d16cf2c7d8d74e5cbc1e0f8f6461d5198c613",
+    "patch_sha256": "a8c305841adf327e180bff6cbac92ada5a0625ca2d9e8c22733e4b3f2b8cad99",
+    "source_archive": "vendor/openwrt-aw1000-phone.tar.xz",
+    "source_archive_sha256": "a3a5b483f6afa6e26a2de5abe4d7dbe6e97231357851f27a7d753b085d4f9fd9"
+  },
+  "mwan3_nft": {
+    "mwan3": {
+      "url": "https://github.com/dl12345/mwan3.git",
+      "tag": "v3.6.12-1",
+      "commit": "cdd4fc56f4de9ccf56d40d6dc04a5b6a4e5a0ae6",
+      "archive": "vendor/mwan3-3.6.12-1.tar.xz",
+      "sha256": "b8ff391c096501fb9a57eed9fc04a49b818e9cfdf1859434f45182d98e5299ea"
+    },
+    "luci-app-mwan3": {
+      "url": "https://github.com/dl12345/luci-app-mwan3.git",
+      "tag": "v3.6.12-1",
+      "commit": "1e8513a69cff32da3dd82c342151cdb4a991c2b7",
+      "archive": "vendor/luci-app-mwan3-3.6.12-1.tar.xz",
+      "sha256": "43d531921f545ea615a59352f31fd00715bb7a61182112a7b375ce760fbf260e"
+    }
+  }
+}

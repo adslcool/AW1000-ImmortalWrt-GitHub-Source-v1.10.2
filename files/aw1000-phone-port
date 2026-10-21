@@ -1,0 +1,16 @@
+#!/bin/sh
+# Return one QModem-owned RG500Q-EA USB AT port; never guess ttyUSB2.
+set -eu
+ports=''
+for section in $(uci -q show qmodem | sed -n 's/^qmodem\.\([A-Za-z0-9_]*\)=modem-device$/\1/p'); do
+    [ "$(uci -q get "qmodem.$section.name" | tr '[:upper:]' '[:lower:]')" = rg500q-ea ] || continue
+    [ "$(uci -q get "qmodem.$section.data_interface")" = usb ] || continue
+    port=$(uci -q get "qmodem.$section.at_port") || continue
+    suffix=${port#/dev/ttyUSB}
+    [ "$suffix" != "$port" ] || continue
+    case "$suffix" in ''|*[!0-9]*) continue;; esac
+    case " $ports " in *" $port "*) :;; *) ports="$ports $port";; esac
+done
+set -- $ports
+[ "$#" = 1 ] || exit 1
+printf '%s\n' "$1"

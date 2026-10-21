@@ -1,0 +1,10 @@
+#!/bin/sh /etc/rc.common
+START=99
+
+boot() {
+    /usr/sbin/aw1000-uplink-enroll all
+}
+
+start() {
+    /usr/sbin/aw1000-uplink-enroll all
+}

@@ -1,0 +1,53 @@
+#!/bin/sh
+# First-start PCM setup. Persist the attempt before any modem-changing command.
+set -eu
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = arcadyan,aw1000 ] || exit 1
+case "${1:-status}" in
+    status|configure|auto) action=${1:-status};;
+    *) echo 'Usage: aw1000-phone-setup [status|configure|auto]' >&2; exit 2;;
+esac
+if [ "$action" = auto ]; then
+    [ "$(uci -q get fxs.main.auto_pcm || echo 1)" != 0 ] || exit 0
+    [ "$(uci -q get fxs.main.at_port || echo auto)" = auto ] || exit 0
+fi
+mkdir -p /var/lock
+exec 9>/var/lock/aw1000-phone-setup.lock
+flock -n 9 || exit 75
+if [ "$action" = auto ]; then
+    case "$(uci -q get fxs.main.pcm_auto_state || true)" in
+        done) exit 0;;
+        attempted)
+            logger -t fxsd 'Automatic PCM setup was already attempted; use aw1000-phone-setup configure to retry manually'
+            exit 0;;
+    esac
+fi
+port=$(/usr/sbin/aw1000-phone-port) || exit 75
+reply=$(/usr/sbin/aw1000-phone-at "$port" 'AT+QDAI?') || exit 75
+printf '%s\n' "$reply"
+[ "$action" != status ] || exit 0
+mode=$(printf '%s\n' "$reply" | sed -n 's/.*+QDAI:[^,]*, *\([01]\),.*/\1/p' | head -n 1)
+case "$mode" in
+    1) echo 'PCM already in slave mode; modem restart not needed.';;
+    0)
+        # Survives a modem/whole-router reset during setup. Never loop CFUN.
+        uci set fxs.main.pcm_auto_state=attempted
+        uci commit fxs
+        sync
+        reply=$(/usr/sbin/aw1000-phone-at "$port" 'AT+QDAI=x,1,0,4,0,0,1,1') || exit 1
+        printf '%s\n' "$reply" | grep -qw OK || exit 1
+        reply=$(/usr/sbin/aw1000-phone-at "$port" 'AT+CFUN=1,1') &&
+            printf '%s\n' "$reply" | grep -qw OK || {
+            echo 'PCM saved; modem restart was not confirmed. Restart the modem manually.' >&2
+            exit 1
+        }
+        logger -t fxsd 'First-start PCM slave mode saved; modem restarting and cellular Internet will reconnect'
+        echo 'PCM slave mode saved. Modem restarting; cellular Internet will reconnect.';;
+    *) echo 'Unrecognised QDAI response; waiting without changing modem settings.' >&2; exit 75;;
+esac
+uci set fxs.main.pcm_auto_state=done
+uci commit fxs
+# Automatic mode is already inside the procd child: never restart itself.
+if [ "$action" = configure ]; then
+    /etc/init.d/fxsd enable
+    /etc/init.d/fxsd restart
+fi

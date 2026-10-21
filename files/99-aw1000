@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/sbin/aw1000-provision once

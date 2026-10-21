@@ -1,0 +1,23 @@
+#!/bin/sh
+# Wait outside the boot init sequence for QModem's USB scan to finish.
+set -eu
+port=$1
+shift
+if [ "$port" = auto ]; then
+    while :; do
+        port=$(/usr/sbin/aw1000-phone-port) && [ -c "$port" ] && break
+        sleep 3
+    done
+fi
+suffix=${port#/dev/ttyUSB}
+[ "$suffix" != "$port" ] || exit 2
+case "$suffix" in ''|*[!0-9]*) exit 2;; esac
+while :; do
+    if /usr/sbin/aw1000-phone-setup auto; then break; else result=$?; fi
+    if [ "$result" != 75 ]; then
+        logger -t fxsd 'Automatic PCM setup failed; automatic modem restart will not be repeated. Check logread -e fxsd'
+        break
+    fi
+    sleep 3
+done
+exec /usr/sbin/fxsd -a "$port" "$@"

@@ -1,0 +1,47 @@
+{
+  "immortalwrt_ref": "v25.12.2",
+  "immortalwrt_commit": "4fc16f2985a358bd43bb522e43f05395fcbd6ed5",
+  "official_feeds_config": "src-git packages https://github.com/immortalwrt/packages.git^84bd86384928955b568988ca0e09e2c78c75173d\nsrc-git luci https://github.com/immortalwrt/luci.git^d6167ea0645cbd1327708d85f94824f42d0eb872\nsrc-git routing https://github.com/openwrt/routing.git^e49d76035aafb85ddc993b59271d8c7ba56b5362\nsrc-git telephony https://github.com/openwrt/telephony.git^2618106d5846a4a542fdf5809f0d3ed228ce439b\nsrc-git video https://github.com/openwrt/video.git^094bf58da6682f895255a35a84349a79dab4bf95\n",
+  "feed_commits": {
+    "helloworld": "0d24da050f2354f48fe8992628054417a5c4b9da",
+    "luci": "d6167ea0645cbd1327708d85f94824f42d0eb872",
+    "packages": "84bd86384928955b568988ca0e09e2c78c75173d",
+    "qmodem": "73d18392db358fb4a0da6ace1af0d07978bae324",
+    "routing": "e49d76035aafb85ddc993b59271d8c7ba56b5362",
+    "telephony": "2618106d5846a4a542fdf5809f0d3ed228ce439b",
+    "video": "094bf58da6682f895255a35a84349a79dab4bf95"
+  },
+  "addon_lock": {
+    "schema": 1,
+    "build_project_version": "1.1.0",
+    "checked_release": "v25.12.2",
+    "checked_release_commit": "4fc16f2985a358bd43bb522e43f05395fcbd6ed5",
+    "checked_at": "2026-10-19",
+    "immortalwrt": "https://github.com/immortalwrt/immortalwrt.git",
+    "feeds": {
+      "qmodem": {
+        "url": "https://github.com/FUjr/QModem.git",
+        "commit": "73d18392db358fb4a0da6ace1af0d07978bae324"
+      },
+      "helloworld": {
+        "url": "https://github.com/fw876/helloworld.git",
+        "commit": "0d24da050f2354f48fe8992628054417a5c4b9da"
+      }
+    },
+    "filetransfer": {
+      "url": "https://github.com/coolsnowwolf/luci.git",
+      "commit": "7b6bba0ffba9c8b9b3933962ea97ac0d41c4ff32",
+      "path": "applications/luci-app-filetransfer"
+    }
+  },
+  "local_compatibility_patches": {
+    "ssrp_mark": {
+      "path": "feeds/helloworld/luci-app-ssr-plus/root/usr/bin/ssr-rules",
+      "sha256": "2587099218644215c93679aedc26c4d0ef49f315ef69fe61e0d0729ef4ce645d"
+    },
+    "qmodem_scan_hook": {
+      "path": "feeds/qmodem/application/qmodem/files/usr/share/qmodem/modem_hook.sh",
+      "sha256": "d10d161746c78e9de2b939f4550437c151923d4eb65a4c014916e790b9bd8399"
+    }
+  }
+}

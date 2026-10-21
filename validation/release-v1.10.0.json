@@ -1,0 +1,88 @@
+{
+  "project_version": "1.10.0",
+  "checked_release": "v25.12.2",
+  "native_tests": {
+    "count": 148,
+    "result": "passed"
+  },
+  "aarch64_qemu_onboarding_tests": {
+    "count": 15,
+    "result": "passed",
+    "openssl_test_library": "3.5.9",
+    "uses_public_test_key": true
+  },
+  "selection_defconfig_checks": [
+    {
+      "include_ssr_plus": false,
+      "include_openclash": false,
+      "include_device_init": false,
+      "selected_packages": 369
+    },
+    {
+      "include_ssr_plus": false,
+      "include_openclash": false,
+      "include_device_init": true,
+      "selected_packages": 371
+    },
+    {
+      "include_ssr_plus": false,
+      "include_openclash": true,
+      "include_device_init": false,
+      "selected_packages": 385
+    },
+    {
+      "include_ssr_plus": false,
+      "include_openclash": true,
+      "include_device_init": true,
+      "selected_packages": 387
+    },
+    {
+      "include_ssr_plus": true,
+      "include_openclash": false,
+      "include_device_init": false,
+      "selected_packages": 389
+    },
+    {
+      "include_ssr_plus": true,
+      "include_openclash": false,
+      "include_device_init": true,
+      "selected_packages": 390
+    },
+    {
+      "include_ssr_plus": true,
+      "include_openclash": true,
+      "include_device_init": false,
+      "selected_packages": 403
+    },
+    {
+      "include_ssr_plus": true,
+      "include_openclash": true,
+      "include_device_init": true,
+      "selected_packages": 404
+    }
+  ],
+  "luci_i18n": {
+    "english_render": "passed",
+    "simplified_chinese_render": "passed",
+    "po2lmo_compilation": "passed"
+  },
+  "ci_syntax": "passed with ShellCheck 0.9.0",
+  "vlmcsd_defaults": {
+    "enabled": 1,
+    "auto_activate": 1,
+    "internet_access": 0
+  },
+  "onboarding": {
+    "default_selected": true,
+    "secret": "BOARD_STATE_KEY",
+    "static_link_validation": "passed",
+    "normal_preserved_upgrade": "keeps existing password",
+    "fresh_boot_before_imei": "root password login locked",
+    "successful_cleanup": "removes writable-layer entry points only; ROM retains executable"
+  },
+  "country_code": "CN",
+  "firmware_full_cross_build": "not_run",
+  "hardware_validation": "not_run",
+  "historical_reports": "validation/history-through-v1.9.0.tar.xz",
+  "public_source_files": 73
+}

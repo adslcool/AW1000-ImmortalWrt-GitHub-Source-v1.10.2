@@ -1,0 +1,20 @@
+{
+  "project_version": "1.10.2",
+  "native_tests": {
+    "count": 151,
+    "result": "passed"
+  },
+  "github_check_syntax": "passed (ShellCheck 0.9)",
+  "password_modes": {
+    "empty_admin_password": "IMEI-derived; generator included; password login locked until initialized",
+    "specified_admin_password": "specified password hash; generator, embedded key header and service excluded",
+    "legacy_component_flag": "ignored; cannot contradict password selection"
+  },
+  "lan_ip": "192.168.1.1",
+  "wifi_password_default": "1234567890",
+  "wifi_password_build_input": true,
+  "master_key": "existing embedded default retained; nonempty BOARD_STATE_KEY overrides in IMEI mode",
+  "package_dependencies": "Unchanged from v1.10.0; retained historical eight-combination defconfig and AArch64 tests are not a new full firmware build.",
+  "full_firmware_build": false,
+  "hardware_validation": false
+}

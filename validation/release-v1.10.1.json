@@ -1,0 +1,25 @@
+{
+  "project_version": "1.10.1",
+  "native_tests": {
+    "count": 150,
+    "result": "passed"
+  },
+  "aarch64_qemu_tests": {
+    "count": 17,
+    "result": "passed",
+    "uses_public_test_key": true
+  },
+  "github_check_syntax": "passed (ShellCheck 0.9)",
+  "defaults": {
+    "lan_ip": "192.168.1.1",
+    "admin_user": "root",
+    "bootstrap_admin_password": "password",
+    "wifi_password": "password",
+    "shared_key_embedded": true,
+    "repository_secret_override": true
+  },
+  "password_behavior": "IMEI component selected: bootstrap password before verified initialization, then derived password; unselected: retain build password; preserved upgrades retain existing password.",
+  "package_configuration": "No dependency or selection changes since v1.10.0; eight-combination defconfig record retained from that version.",
+  "full_firmware_build": false,
+  "hardware_validation": false
+}

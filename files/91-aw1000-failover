@@ -1,0 +1,36 @@
+#!/bin/sh
+# One-time replacement of the previous project's routing manager.
+set -eu
+MARKER=/etc/aw1000-mwan3-v1
+[ ! -f "$MARKER" ] || exit 0
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = arcadyan,aw1000 ] || exit 1
+uci -q get network.wan >/dev/null || exit 1
+if [ -f /etc/config/mwan3 ]; then cp /etc/config/mwan3 /etc/config/mwan3.pre-aw1000; fi
+cp /usr/share/aw1000/mwan3.default /etc/config/mwan3
+# The old service is not included in new images; disable preserved settings too.
+touch /etc/config/qmodem_uplink
+uci set qmodem_uplink.main=manager
+uci set qmodem_uplink.main.enabled=0
+uci commit qmodem_uplink
+if [ -x /etc/init.d/qmodem-uplink ]; then
+    /etc/init.d/qmodem-uplink stop
+    /etc/init.d/qmodem-uplink disable
+fi
+uci set network.wan.metric=10
+if uci -q get network.wan6 >/dev/null; then uci set network.wan6.metric=10; fi
+uci commit network
+# Offloading can retain stale path decisions across WAN failure.
+uci set 'firewall.@defaults[0].flow_offloading=0'
+uci set 'firewall.@defaults[0].flow_offloading_hw=0'
+uci set 'firewall.@defaults[0].fullcone=0'
+uci commit firewall
+uci set qmodem.main.enable_dial=1
+uci commit qmodem
+/etc/init.d/mwan3 enable
+/etc/init.d/aw1000-mwan-follow enable
+/etc/init.d/mwan3 reload
+mkdir -p /etc
+touch /etc/sysupgrade.conf
+grep -qxF "$MARKER" /etc/sysupgrade.conf || printf '%s\n' "$MARKER" >> /etc/sysupgrade.conf
+printf '%s\n' 'AW1000 mwan3-nft migration v1' > "$MARKER"
+chmod 600 "$MARKER"

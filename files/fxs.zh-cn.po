@@ -1,0 +1,333 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "AT+QRXGAIN value, 8192 is unity."
+msgstr "AT+QRXGAIN 参数值，8192 表示不放大也不衰减。"
+
+msgid "Advanced"
+msgstr "高级设置"
+
+msgid "Answered"
+msgstr "已接听"
+
+msgid "Automatic PCM setup"
+msgstr "自动配置 PCM 音频"
+
+msgid "Available while the phone port is on"
+msgstr "启用电话端口后可查看"
+
+msgid "Back from hold"
+msgstr "已恢复保持的通话"
+
+msgid "Battery voltage"
+msgstr "馈电电压"
+
+msgid "Block hidden numbers"
+msgstr "拦截隐藏号码"
+
+msgid "Blocked"
+msgstr "已拦截"
+
+msgid "Blocked numbers"
+msgstr "号码黑名单"
+
+msgid "Busy tone"
+msgstr "忙音"
+
+msgid "Call waiting"
+msgstr "呼叫等待"
+
+msgid "Caller ID"
+msgstr "来电显示"
+
+msgid "Calling"
+msgstr "正在呼叫"
+
+msgid "Calls from these numbers are rejected without ringing the phone. Numbers match with or without the country code."
+msgstr "拦截以下号码的来电，电话机不会响铃。号码匹配兼容带国家代码和不带国家代码的格式。"
+
+msgid "Speed dial code"
+msgstr "速拨代码"
+
+msgid "Configure modem PCM once on first start. A required modem restart briefly disconnects cellular Internet."
+msgstr "首次启动时自动检查并按需配置模组 PCM 音频，仅自动执行一次。若需要重启模组，蜂窝网络会短暂断开。"
+
+msgid "Call connected"
+msgstr "已接通"
+
+msgid "Could not change the phone port: %s"
+msgstr "无法切换电话端口状态：%s"
+
+msgid "Current flows with the handset down, check the cable"
+msgstr "挂机时仍有电流，请检查电话线"
+
+msgid "DTMF"
+msgstr "DTMF（双音多频）"
+
+msgid "Dial * and the code on the phone, then press # or wait. For example *1 calls the number saved under code 1."
+msgstr "在电话机上拨 * 加速拨代码，再按 # 或等待自动拨出。例如拨 *1 可呼叫代码 1 对应的号码。"
+
+msgid "Dial tone"
+msgstr "拨号音"
+
+msgid "Dialed"
+msgstr "已拨出"
+
+msgid "Dialing"
+msgstr "正在拨号"
+
+msgid "Earpiece gain (dB)"
+msgstr "听筒增益（dB）"
+
+msgid "Earpiece volume"
+msgstr "听筒音量"
+
+msgid "Ended by remote"
+msgstr "对方已挂断"
+
+msgid "Enter a code"
+msgstr "请输入速拨代码"
+
+msgid "Enter a phone number"
+msgstr "请输入电话号码"
+
+msgid "Extra level of the other side in the handset."
+msgstr "额外调整听筒中对方声音的音量。"
+
+msgid "FSK (Bellcore)"
+msgstr "FSK（Bellcore 制式）"
+
+msgid "FSK (ETSI)"
+msgstr "FSK（ETSI 制式）"
+
+msgid "Failed"
+msgstr "失败"
+
+msgid "General"
+msgstr "常规设置"
+
+msgid "Handset"
+msgstr "听筒状态"
+
+msgid "High"
+msgstr "偏高"
+
+msgid "Hold / swap"
+msgstr "保持／切换通话"
+
+msgid "Home number"
+msgstr "家庭"
+
+msgid "Hung up"
+msgstr "已挂断"
+
+msgid "Idle (on hook)"
+msgstr "空闲（挂机）"
+
+msgid "In call"
+msgstr "通话中"
+
+msgid "Incoming"
+msgstr "来电"
+
+msgid "Kernel module loaded"
+msgstr "内核模块已加载"
+
+msgid "LED that is on while the port is on. Leave empty to not use an LED."
+msgstr "电话端口启用时常亮的指示灯。留空表示不使用指示灯。"
+
+msgid "Level of your voice sent to the other side. Lower it if the other side hears distortion."
+msgstr "调整传送给对方的声音大小。若对方听到失真，请降低此值。"
+
+msgid "Phone line"
+msgstr "线路状态"
+
+msgid "Line test"
+msgstr "线路检测"
+
+msgid "Line voltage"
+msgstr "线路电压"
+
+msgid "Loop current"
+msgstr "环路电流"
+
+msgid "Low, check for a short or another device on the line"
+msgstr "偏低，请检查线路是否短路或并接了其他设备"
+
+msgid "Low, check the cable and the phone"
+msgstr "偏低，请检查电话线和电话机"
+
+msgid "Microphone gain (dB)"
+msgstr "麦克风增益（dB）"
+
+msgid "Missed"
+msgstr "未接来电"
+
+msgid "Modem AT port"
+msgstr "模组 AT 端口"
+
+msgid "Modem audio not set to slave mode"
+msgstr "模组音频尚未设为从机模式"
+
+msgid "Modem output volume (AT+CLVL)."
+msgstr "模组输出音量（AT+CLVL）。"
+
+msgid "Modem receive gain"
+msgstr "模组接收增益"
+
+msgid "My number"
+msgstr "本机号码"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "No calls yet"
+msgstr "暂无通话记录"
+
+msgid "Number"
+msgstr "电话号码"
+
+msgid "Normal reading"
+msgstr "正常"
+
+msgid "OK, it drops while the handset is lifted"
+msgstr "正常，摘机时电压会降低"
+
+msgid "Off"
+msgstr "关闭"
+
+msgid "Only channel 1 is wired on the AW1000."
+msgstr "AW1000 仅连接了通道 1。"
+
+msgid "Out of range"
+msgstr "超出正常范围"
+
+msgid "Phone (RJ11)"
+msgstr "电话（RJ11）"
+
+msgid "Phone LED"
+msgstr "电话指示灯"
+
+msgid "Phone port off"
+msgstr "电话端口已关闭"
+
+msgid "Phone port: OFF"
+msgstr "电话端口：关闭"
+
+msgid "Phone port: ON"
+msgstr "电话端口：开启"
+
+msgid "Play a ringing tone while the other phone rings. Turn it off if the network already sends one."
+msgstr "对方电话响铃时播放回铃音。若运营商网络已提供回铃音，请关闭此项。"
+
+msgid "Recent calls"
+msgstr "最近通话"
+
+msgid "Reject calls that do not show a number."
+msgstr "拦截不显示号码的来电。"
+
+msgid "Ring the phone"
+msgstr "测试电话响铃"
+
+msgid "Ringback tone"
+msgstr "回铃音"
+
+msgid "Ringing"
+msgstr "正在响铃"
+
+msgid "Ringing, measured values are not meaningful"
+msgstr "正在响铃，此时测量值不具参考意义"
+
+msgid "SLIC channel"
+msgstr "电话接口芯片通道（SLIC）"
+
+msgid "SLIC patch file"
+msgstr "SLIC 补丁文件"
+
+msgid "SLIC patch present"
+msgstr "SLIC 补丁已就绪"
+
+msgid "Sends the caller's number to phones with a display after the first ring. If your phone shows nothing, try another format."
+msgstr "首次响铃后向支持来电显示的电话机发送来电号码。若电话机不显示号码，请尝试其他制式。"
+
+msgid "Service running"
+msgstr "电话服务正在运行"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Settings for the RJ11 phone port."
+msgstr "配置 RJ11 电话端口。"
+
+msgid "Shown on the Status page. Most prepaid SIMs do not store their own number, so enter it here."
+msgstr "显示在状态页面。多数预付费 SIM 卡未存储本机号码，可在此手动填写。"
+
+msgid "Speed dial"
+msgstr "快捷拨号"
+
+msgid "Starting…"
+msgstr "正在启动…"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Stop ringing"
+msgstr "停止响铃"
+
+msgid "Stopped"
+msgstr "已停止"
+
+msgid "Stopping…"
+msgstr "正在停止…"
+
+msgid "Switched to"
+msgstr "已切换至"
+
+msgid "The phone service did not finish starting last time (the router restarted), so it was not started again."
+msgstr "上次电话服务启动未完成时路由器发生了重启，因此本次未自动重试启动。"
+
+msgid "The phone service is not running."
+msgstr "电话服务未运行。"
+
+msgid "This code is already used"
+msgstr "此速拨代码已被使用"
+
+msgid "Try again"
+msgstr "重试"
+
+msgid "Unusual"
+msgstr "异常"
+
+msgid "Unusual for a lifted handset"
+msgstr "摘机状态下此数值异常"
+
+msgid "Use a normal telephone on the RJ11 port to make and receive calls with the SIM."
+msgstr "将普通电话机接入 RJ11 端口，即可使用 SIM 卡拨打和接听电话。"
+
+msgid "Use auto to select the QModem RG500Q-EA USB AT port."
+msgstr "填写 auto 可自动选择 QModem 管理的 RG500Q-EA USB AT 端口。"
+
+msgid "Waiting for modem"
+msgstr "正在等待模组就绪"
+
+msgid "no"
+msgstr "否"
+
+msgid "off hook"
+msgstr "摘机"
+
+msgid "on hook"
+msgstr "挂机"
+
+msgid "unknown"
+msgstr "未知"
+
+msgid "unknown, set it in Settings"
+msgstr "未知，请在设置中填写"
+
+msgid "yes"
+msgstr "是"
+

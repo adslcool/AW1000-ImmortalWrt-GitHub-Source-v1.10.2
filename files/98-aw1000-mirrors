@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = arcadyan,aw1000 ] || exit 0
+mirror=https://mirrors.ustc.edu.cn/immortalwrt
+# Persist the upstream default-settings mirror preference before its 99 hook.
+# Preserve release/architecture/ABI paths and package signature verification.
+uci -q get 'system.@imm_init[0]' >/dev/null || uci add system imm_init >/dev/null
+uci set "system.@imm_init[0].apk_mirror=$mirror"
+uci set "system.@imm_init[0].opkg_mirror=$mirror"
+uci commit system
+for file in /etc/apk/repositories.d/distfeeds.list /etc/opkg/distfeeds.conf; do
+    [ -f "$file" ] || continue
+    sed -i \
+        -e "s|https\?://downloads.immortalwrt.org|$mirror|g" \
+        -e "s|https\?://mirrors.vsean.net/openwrt|$mirror|g" \
+        -e "s|https\?://mirrors.cernet.edu.cn/immortalwrt|$mirror|g" "$file"
+done

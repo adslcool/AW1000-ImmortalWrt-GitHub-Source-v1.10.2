@@ -1,0 +1,73 @@
+#!/bin/sh
+# One-time migration; preserve APNs, Wi-Fi credentials and mwan3 thresholds.
+set -eu
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = arcadyan,aw1000 ] || exit 0
+# LED ownership migration is independent of the v1.6.0 IPv6 baseline backup.
+# Existing IPv6 snapshots must never be overwritten during this maintenance update.
+LED_MARKER=/etc/aw1000-led-v161
+if [ ! -f "$LED_MARKER" ]; then
+    /usr/sbin/aw1000-leds --configure
+    touch "$LED_MARKER" /etc/sysupgrade.conf
+    grep -qxF "$LED_MARKER" /etc/sysupgrade.conf || echo "$LED_MARKER" >> /etc/sysupgrade.conf
+fi
+FAST_MARKER=/etc/aw1000-internet-v170
+if [ ! -f "$FAST_MARKER" ]; then
+    touch /etc/config/aw1000
+    uci set aw1000.internet=policy
+    [ -n "$(uci -q get aw1000.internet.priority || true)" ] || uci set aw1000.internet.priority=wired_only
+    uci commit aw1000
+    cell=$(uci -q get mwan3.globals.aw1000_cellular || true)
+    for iface in wan "$cell"; do
+        case "$iface" in ''|*[!A-Za-z0-9_]*) continue;; esac
+        [ "$(uci -q get "mwan3.$iface" || true)" = interface ] || continue
+        profile="$(uci -q get "mwan3.$iface.interval" || true):$(uci -q get "mwan3.$iface.timeout" || true):$(uci -q get "mwan3.$iface.down" || true):$(uci -q get "mwan3.$iface.up" || true)"
+        case "$profile" in 10:2:3:7|2:1:2:15)
+            for pair in interval:2 timeout:1 failure_interval:2 recovery_interval:2 down:2 up:15; do
+                uci set "mwan3.$iface.${pair%%:*}=${pair#*:}"
+            done;;
+            *) logger -t aw1000-internet "Preserved custom tracker settings: $iface";;
+        esac
+    done
+    uci commit mwan3
+    touch "$FAST_MARKER" /etc/sysupgrade.conf
+    grep -qxF "$FAST_MARKER" /etc/sysupgrade.conf || echo "$FAST_MARKER" >> /etc/sysupgrade.conf
+fi
+PHONE_MARKER=/etc/aw1000-phone-led-v175
+if [ ! -f "$PHONE_MARKER" ]; then
+    uci set fxs.main.led=green:phone
+    uci commit fxs
+    touch "$PHONE_MARKER" /etc/sysupgrade.conf
+    grep -qxF "$PHONE_MARKER" /etc/sysupgrade.conf || echo "$PHONE_MARKER" >> /etc/sysupgrade.conf
+fi
+MARKER=/etc/aw1000-v160
+[ ! -f "$MARKER" ] || exit 0
+touch /etc/config/aw1000
+uci set aw1000.ipv6=policy
+uci set aw1000.ipv6.nat66_fallback=1
+uci set "aw1000.ipv6.original_classes=$(uci -q get network.lan.ip6class || true)"
+for key in ra_default ra_lifetime ra dhcpv6 ndp ra_slaac; do
+    uci set "aw1000.ipv6.original_$key=$(uci -q get "dhcp.lan.$key" || echo unset)"
+done
+uci commit aw1000
+uci set network.lan.ip6assign=64
+if uci -q get network.wan6 >/dev/null; then
+    [ -n "$(uci -q get network.wan6.reqprefix || true)" ] || uci set network.wan6.reqprefix=auto
+    [ -n "$(uci -q get network.wan6.reqaddress || true)" ] || uci set network.wan6.reqaddress=try
+fi
+uci commit network
+# The managed LAN advertises only prefixes admitted by its ip6class. Relay
+# mode would bypass that selection and cannot implement NAT66 fallback.
+uci set dhcp.lan.ra=server
+uci set dhcp.lan.dhcpv6=server
+uci set dhcp.lan.ndp=disabled
+uci set dhcp.lan.ra_slaac=1
+uci commit dhcp
+# Enforce policy-routing compatibility even on upgrades that already ran v1.5.
+uci set 'firewall.@defaults[0].flow_offloading=0'
+uci set 'firewall.@defaults[0].flow_offloading_hw=0'
+uci set 'firewall.@defaults[0].fullcone=0'
+uci commit firewall
+mkdir -p /etc
+touch /etc/sysupgrade.conf
+grep -qxF "$MARKER" /etc/sysupgrade.conf || echo "$MARKER" >> /etc/sysupgrade.conf
+printf '%s\n' 'AW1000 dual IPv6 hot standby and steady LEDs v1.6.0' > "$MARKER"
